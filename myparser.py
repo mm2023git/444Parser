@@ -1,10 +1,40 @@
 import re
 from index import index
 
+keywords = {"select", "create", "insert", "table", "int", "varchar", "float"}
+
+tables_map = {}
+
+def create():
+    if statement[0] == "table": 
+        statement.pop(0)
+        if statement[0] in keywords:
+            print("Error: Can't use a keyword as a table name")
+        else: 
+            tables_map.add(statement.pop(0))
+            if statement[0] != "(":
+                print("you are missing an open paranthesis in your create statement")
+            else: 
+                pass
+    else:
+        print("create statement should be followed by the `table` keyword ")
+    return
+
 input = "   INSERT SELECT CREATE A"
+
+
 
 stack_index = index(input)
 
+statement = ["create", "table", "users"]
+
+if statement[0] == "create":
+    statement.pop(0)
+    create(statement)
+elif statement[0] == "select":
+    pass
+elif statement[0] == "Insert":
+    pass
 
 def parse():
     
@@ -38,8 +68,7 @@ def parse():
 def select():
     return 
 
-def create():
-    return
+
 
 def insert():
     return
