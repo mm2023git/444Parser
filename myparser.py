@@ -7,14 +7,14 @@ tables_map = {}
 
 def create(statement):
     global tables_map
-    print(statement)
+
     if statement[0] == "table": 
         statement.pop(0)
         if statement[0] in keywords:
             print("**Error: Can't use a keyword as a table name")
             exit()
         else: 
-            tables_map[statement.pop(0)] = "hellow"
+            tables_map[statement.pop(0)] = []
             if statement[0] != "(":
                 print("**Error: you are missing an open paranthesis in your create statement")
                 exit()
@@ -26,13 +26,18 @@ def create(statement):
     print(tables_map)
     return
 
-
+#key = value
+#"users" = [("name", "varchar(20)"), ("id", "int")]
 
 
 
 # stack_index = index(input)
 
-statement = ["create", "table", "users", ")"]
+statement_string = "create table users ( name varchar(20)"
+statement_string_new = " ".join(statement_string.split())
+
+statement = statement_string_new.split(" ")
+
 
 if statement[0] == "create":
     statement.pop(0)
@@ -81,3 +86,21 @@ def insert():
  
 
 # parse()
+print("Does the paranteheses contain a +ve number?")
+print(bool(re.match('\\([1-9]+$\\)', "(123)"))) 
+
+# key     =  value
+# "users" = [("name", "varchar(20)"), ("id", "int"), ("timeOfCreation, "float")]
+
+# insert into users timeOfCreation float
+
+#  create table users (name varchar(20), id int)
+
+#  if entry[0:7] == "varchar":
+#     if bool(re.match('\(^[1-9]+$\)', entry[7:]))
+
+
+
+
+
+# select timeOfCreation from users
