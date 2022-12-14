@@ -79,12 +79,45 @@ def creating_iteration(statement, table_name):
             statement.pop(0)
             creating_iteration(statement, table_name)
         elif statement[0] == ")":
+            statement.pop(0)
             print("Compiled Sucessfully")
 
     return
 
 def insert(statement):
-    pass
+    
+    if statement[0] == "into":
+        statement.pop(0)
+        print(statement)
+        if statement[0] in keywords or statement[0] in datatypes:
+            print("**** Error: Can not use a keywoard as table name ****")
+            exit()
+        else:
+            print("test")
+            if statement[0] in tables_map:
+                table_select = statement[0]
+                statement.pop(0)
+                #check if table exists
+                if statement[0] == "(":
+                    statement.pop(0)
+                    insert_seq_one(table_select, statement)
+                  
+                else:
+                    print("**** Error: Missing Parentheses ****")
+                    exit()
+            elif statement[0] in tables_map + "()":
+                pass
+            else:
+                print("****Error table does not exist****")
+                exit()
+
+def insert_seq_one(table_name, statement):
+    for i in tables_map[table_name]:
+        if statement[0] == tables_map[table_name][i][0]:
+            statement.pop(0)
+        elif statement[0] == table_name[table_name][i][0] + ",":
+            statement.pop(0)
+        
 
 def select(statement):
     pass
@@ -92,29 +125,34 @@ def select(statement):
                             
 # --------------------- MAIN ---------------------
 
-statement_string = "create table users ( id int , name varchar (15)  )"
+statement_string = "create table users ( id int , name varchar (15)  ) insert into users ( id, name )"
 statement_string_new = " ".join(statement_string.split())
 statement = statement_string_new.split(" ")
 
 # Create Statement
-if statement[0] == "create":
-    statement.pop(0)
-    create(statement)
-    print(tables_map)
+def parse():
+    print(statement)
+    if statement[0] == "create":
+        statement.pop(0)
+        create(statement)
+        print("block")
+        print(tables_map["users"][1][0])
+        print("block")
+        parse()
 
-# Insert Statement
-elif statement[0] == "Insert":
-    statement.pop(0)
-    insert(statement)
+    # Insert Statement
+    elif statement[0] == "insert":
+        statement.pop(0)
+        insert(statement)
 
-# Select Statement
-elif statement[0] == "select":
-    statement.pop(0)
-    select(statement)
-else:
-    print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
-    exit()
-
-
+    # Select Statement
+    elif statement[0] == "select":
+        statement.pop(0)
+        select(statement)
+    else:
+        print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
+        exit()
+    
+parse()
 
  
