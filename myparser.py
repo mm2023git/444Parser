@@ -1,106 +1,123 @@
 import re
 from index import index
 
-keywords = {"select", "create", "insert", "table", "int", "varchar", "float"}
+keywords = {"select", "create", "insert", "table"}
+
+datatypes = {"int", "varchar", "float"}
 
 tables_map = {}
+table_name = ""
+column_name = ""
+column_datatype = ""
+
 
 def create(statement):
     global tables_map
-
+    # checking if "table" after "create"
     if statement[0] == "table": 
         statement.pop(0)
-        if statement[0] in keywords:
-            print("**Error: Can't use a keyword as a table name")
+        #Making sure a keyword isn't used for a table name
+        if statement[0] in keywords or statement[0] in datatypes:
+            print("****Error: Can not use a keyword as a table name ****")
             exit()
+        # if table name is valid, go here
         else: 
-            tables_map[statement.pop(0)] = []
+            # get the table name
+            table_name = statement.pop(0)
+            #Add the table name to the hashmap
+            tables_map[table_name] = []
+            #if the next token isn't an open paranthesis, throw an error and exit
             if statement[0] != "(":
-                print("**Error: you are missing an open paranthesis in your create statement")
+                print("****Error: you are missing an open paranthesis in your create statement ****")
                 exit()
+            #if the next token is an open paranthesis, continue
             else: 
-                pass
+                #pop the open parathesis from the list
+                statement.pop(0)
+                creating_iteration(statement, table_name)
+                
+    #if "table" after "create" is not provided you go here
     else:
-        print("**Error: create statement should be followed by the `table` keyword ")
+        print("****Error: create statement should be followed by the `table` keyword ****")
         exit()
-    print(tables_map)
+    return
+                
+
+def creating_iteration(statement, table_name):
+    # check if column name isn't a keyword, if it is, throw and error and exit
+    print("we are looking at column name: "+statement[0])
+    if statement[0] in keywords or statement[0] in datatypes: 
+        print("****Error: Can not use a keyword as a column name ****")
+        exit()
+    #if the column name is valid, go here
+    else:
+        column_name = statement.pop(0)
+        # checking if the column datatype is a supported datatype by the language, if it isn't, throw an error and exit
+        if statement[0][0:7] not in datatypes:
+            print("****Error: Make sure you are using a supported datatype for the columns ****")
+            exit()
+        # if the column datatype is valid, go here
+        else: 
+            #checking if the column datatype is a varchar
+            if statement[0][0:7] == "varchar":
+                #checking if the varchar datatype is given valid arguments, we only want negative numbers in the paranthesis after the varchar ex: varchar(20)
+                if bool(re.match('\\([0-9]+\\)$', statement[1])):
+                    column_datatype = statement.pop(0) + " " +  statement.pop(0)
+                    tables_map[table_name].append((column_name, column_datatype))
+                #if varchar isn't given valid argument, then throw an error and exit
+                else:
+                    print("****Error: Make sure the datatype varchar is of this format: varchar(+ve int) ****")
+                    exit()
+            else: 
+                if statement[0] != "," and statement[0] != ")":
+                    print("****Error: Make sure you are using a supported datatype for the columns ****")
+                    exit()
+                
+        print(statement)        
+        if len(statement)>0 and statement[0] == ",":
+            statement.pop(0)
+            creating_iteration(statement, table_name)
+        elif statement[0] == ")":
+            print("we have reached the end")
     return
 
-#key = value
-#"users" = [("name", "varchar(20)"), ("id", "int")]
+def insert(statement):
+    pass
 
+def select(statement):
+    pass
 
+                            
+# --------------------- MAIN ---------------------
 
-# stack_index = index(input)
-
-statement_string = "create table users ( name varchar(20)"
+statement_string = "create table users ( id int , name varchar (15)  )"
 statement_string_new = " ".join(statement_string.split())
-
 statement = statement_string_new.split(" ")
 
-
+# Create Statement
 if statement[0] == "create":
     statement.pop(0)
     create(statement)
-elif statement[0] == "select":
-    pass
-elif statement[0] == "Insert":
-    pass
+    print(tables_map)
+else:
+    print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
+    exit()
 
-# def parse():
-    
-#     if stack_index.get_stack():
-#         print(stack_index.get_stack())
-#         if re.findall("\s", stack_index.get_stack()[0]):
-#             stack_index.pop_stack()
-#             parse()
-#             #Checks for white space and pops it off the stack
-#         elif re.findall("SELECT", stack_index.stringify(6), re.IGNORECASE):
-#             stack_index.popify(6)
-#             select()
-#             parse()
-#             #once SELECT is found pop it off the stack, enter the select grammar and then return back to the parser
-#         elif re.findall("INSERT", stack_index.stringify(6), re.IGNORECASE):
-#             stack_index.popify(6)
-#             insert()
-#             parse()
-#             #once INSERT is found pop it off the stack, enter the select grammar and then return back to the parser
-#         elif re.findall("CREATE", stack_index.stringify(6), re.IGNORECASE):
-#             stack_index.popify(6)
-#             insert()
-#             parse()
-#             #once CREATE is found pop it off the stack, enter the select grammar and then return back to the parser
-#     print(stack_index.get_stack())
-#     return "compiled successfully."
+# # Insert Statement
+# if statement.pop(0) == "Insert":
+#     insert(statement)
+# else:
+#     print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
+#     exit()
+
+# # Select Statement
+# if statement[0] == "select":
+#     statement.pop(0)
+#     select(statement)
+# else:
+#     print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
+#     exit()
 
 
 
-
-def select():
-    return 
-
-
-
-def insert():
-    return
  
-
-# parse()
-print("Does the paranteheses contain a +ve number?")
-print(bool(re.match('\\([1-9]+$\\)', "(123)"))) 
-
-# key     =  value
-# "users" = [("name", "varchar(20)"), ("id", "int"), ("timeOfCreation, "float")]
-
-# insert into users timeOfCreation float
-
-#  create table users (name varchar(20), id int)
-
-#  if entry[0:7] == "varchar":
-#     if bool(re.match('\(^[1-9]+$\)', entry[7:]))
-
-
-
-
-
-# select timeOfCreation from users
