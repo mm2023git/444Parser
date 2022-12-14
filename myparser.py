@@ -115,13 +115,142 @@ def creating_iteration(statement, table_name):
             statement.pop(0)
             creating_iteration(statement, table_name)
         elif statement[0] == ")":
+            statement.pop(0)
             print("Compiled Sucessfully")
 
     return
 
+#---------- Insert ------------
 
 def insert(statement):
-    pass
+    
+    if statement[0] == "into":
+        statement.pop(0)
+        
+        if statement[0] in keywords or statement[0] in datatypes:
+            print("**** Error: Can not use a keywoard as table name ****")
+            exit()
+        else:
+            if statement[0] in tables_map:
+                table_select = statement[0]
+                statement.pop(0)
+                #check if table exists
+                if statement[0] == "(":
+                    statement.pop(0)
+                    insert_seq_one(table_select, statement)
+                    if statement[0] == "values":
+                        statement.pop(0)
+                        
+                        if statement[0] == "(":
+                            statement.pop(0)
+                            insert_seq_two(table_select, statement)
+                            
+                            
+                    else:
+                        ("**** Error: Expected VALUES. Received " + statement[0] + " ****")
+
+                else:
+                    print("**** Error: Missing Parentheses ****")
+                    exit()
+            elif statement[0] in tables_map + "()":
+                pass
+            else:
+                print("****Error table does not exist****")
+                exit()
+
+def insert_seq_one(table_name, statement):
+    #Read through all variable names
+
+    for i in tables_map[table_name]:
+        
+        if statement[0] == i[0]:
+            statement.pop(0)
+            if statement[0] == ",":
+                statement.pop(0)
+            elif statement[0] == ")":
+                statement.pop(0)
+                break
+            else:
+                print("**** Error: Missing comma between variables. ****")
+                exit()
+        elif statement[0] == i[0] + ",":
+            statement.pop(0)
+        #first two if statements check if value matches the stack of variables
+        elif statement[0] == ")":
+            statement.pop(0)
+            break
+        else:
+            print("**** Error: Variable either in wrong order or does not exist in table. ****")
+            exit()
+   
+        
+
+def insert_seq_two(table_name, statement):
+
+    i = 0
+    while i < len(tables_map[table_name]):
+        data_map = tables_map[table_name][i][1]
+        data_map = re.sub("\(.*?\)", "", data_map)
+        data_map = re.sub("\s", "", data_map)
+
+        datatype_sub = ["int", "varchar", "float"]
+
+        if datatype_sub[0] == data_map:
+            if re.findall("^[0-9]*$", statement[0]):
+                statement.pop(0)
+                if statement[0] == ",":
+                    statement.pop(0)
+                elif statement[0] == ")":
+                    statement.pop(0)
+                else:
+                    print("**** Error: Value must be followed by a comma. ****")
+                    exit()
+            else:
+                print("**** Error: Value does match expected data type: int ****")
+                exit()
+            #Integer handling
+        elif datatype_sub[1] == data_map:
+            if re.findall("[a-z]|[A-Z]|[0-9]", statement[0]):
+                rtest =  re.compile(r"\((\d+)\)")
+                rx = int((rtest.findall(tables_map[table_name][i][1]))[0])
+                if len(statement[0]) <= rx:
+                    statement.pop(0)
+                    if statement[0] == ",":
+                        statement.pop(0)
+                    elif statement[0] == ")":
+                        statement.pop(0)
+                    else:
+                        print("**** Error: Value must be followed by a comma. ****")
+                        exit()                 
+                else:
+                    print("**** Error: String exceeds maximum length. ****")
+                    exit()  
+            else:
+                print("**** Error: Value does match expected data type: varchar ****")
+                exit()
+            #varchar handling
+        elif datatype_sub[2] == data_map:
+            if re.findall("[0-9]\.[0-9]", statement[0]):
+                statement.pop(0)
+                if statement[0] == ",":
+                    statement.pop(0)
+                elif statement[0] == ")":
+                    statement.pop(0)
+                else:
+                    print("**** Error: Value must be followed by a comma. ****")
+                    exit()
+            else:
+                print("**** Error: Value does match expected data type: float ****")
+                exit()
+            #float handling
+           
+
+        i += 1
+
+    return
+
+        
+
 
 
 # def select(statement):
@@ -144,7 +273,6 @@ for statement_string in statements_array:
     if statement[0] == "create" or statement[0] == "CREATE":
         statement.pop(0)
         create(statement)
-        print(tables_map)
 
     # Insert Statement
     elif statement[0] == "Insert" or statement[0] == "INSERT":
@@ -152,6 +280,9 @@ for statement_string in statements_array:
         # insert(statement)
         pass
 
+    elif statement[0] == "insert":
+        statement.pop(0)
+        insert(statement)
     # Select Statement
     elif statement[0] == "select" or statement[0] == "SELECT":
         statement.pop(0)
