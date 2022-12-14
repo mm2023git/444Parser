@@ -1,0 +1,4 @@
+create table users ( balance float , id int , name varchar
+(15) ); select
+* from
+users;

@@ -125,21 +125,28 @@ def select(statement):
                             
 # --------------------- MAIN ---------------------
 
-statement_string = "create table users ( id int , name varchar (15)  ) insert into users ( id, name )"
-statement_string_new = " ".join(statement_string.split())
-statement = statement_string_new.split(" ")
+with open('input.txt', "r") as f:
+    statements = f.read().replace('\n', ' ')
 
-# Create Statement
-def parse():
-    print(statement)
+statements_array = statements.split(";")
+
+statements_array = statements_array[0:len(statements_array)-1]
+
+
+for statement_string in statements_array:
+    statement_string = " ".join(statement_string.split())
+    statement = statement_string.split(" ")
+    # Create Statement
     if statement[0] == "create":
         statement.pop(0)
         create(statement)
-        print("block")
-        print(tables_map["users"][1][0])
-        print("block")
-        parse()
+        print(tables_map)
 
+    # Insert Statement
+    elif statement[0] == "Insert":
+        # statement.pop(0)
+        # insert(statement)
+        pass
     # Insert Statement
     elif statement[0] == "insert":
         statement.pop(0)
@@ -147,12 +154,13 @@ def parse():
 
     # Select Statement
     elif statement[0] == "select":
-        statement.pop(0)
-        select(statement)
+        # statement.pop(0)
+        # select(statement)
+        pass
     else:
         print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
         exit()
-    
-parse()
+
+
 
  
