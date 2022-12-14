@@ -45,7 +45,6 @@ def create(statement):
 
 def creating_iteration(statement, table_name):
     # check if column name isn't a keyword, if it is, throw and error and exit
-    print("we are looking at column name: "+statement[0])
     if statement[0] in keywords or statement[0] in datatypes: 
         print("****Error: Can not use a keyword as a column name ****")
         exit()
@@ -69,16 +68,19 @@ def creating_iteration(statement, table_name):
                     print("****Error: Make sure the datatype varchar is of this format: varchar(+ve int) ****")
                     exit()
             else: 
+                column_datatype = statement.pop(0)
+                tables_map[table_name].append((column_name, column_datatype))
                 if statement[0] != "," and statement[0] != ")":
-                    print("****Error: Make sure you are using a supported datatype for the columns ****")
+                    print("****Error: 000Make sure you are using a supported datatype for the columns ****")
                     exit()
                 
-        print(statement)        
+             
         if len(statement)>0 and statement[0] == ",":
             statement.pop(0)
             creating_iteration(statement, table_name)
         elif statement[0] == ")":
-            print("we have reached the end")
+            print("Compiled Sucessfully")
+
     return
 
 def insert(statement):
@@ -99,24 +101,19 @@ if statement[0] == "create":
     statement.pop(0)
     create(statement)
     print(tables_map)
+
+# Insert Statement
+elif statement[0] == "Insert":
+    statement.pop(0)
+    insert(statement)
+
+# Select Statement
+elif statement[0] == "select":
+    statement.pop(0)
+    select(statement)
 else:
     print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
     exit()
-
-# # Insert Statement
-# if statement.pop(0) == "Insert":
-#     insert(statement)
-# else:
-#     print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
-#     exit()
-
-# # Select Statement
-# if statement[0] == "select":
-#     statement.pop(0)
-#     select(statement)
-# else:
-#     print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
-#     exit()
 
 
 
