@@ -92,28 +92,37 @@ def select(statement):
                             
 # --------------------- MAIN ---------------------
 
-statement_string = "create table users ( id int , name varchar (15)  )"
-statement_string_new = " ".join(statement_string.split())
-statement = statement_string_new.split(" ")
+with open('input.txt', "r") as f:
+    statements = f.read().replace('\n', ' ')
 
-# Create Statement
-if statement[0] == "create":
-    statement.pop(0)
-    create(statement)
-    print(tables_map)
+statements_array = statements.split(";")
 
-# Insert Statement
-elif statement[0] == "Insert":
-    statement.pop(0)
-    insert(statement)
+statements_array = statements_array[0:len(statements_array)-1]
 
-# Select Statement
-elif statement[0] == "select":
-    statement.pop(0)
-    select(statement)
-else:
-    print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
-    exit()
+
+for statement_string in statements_array:
+    statement_string = " ".join(statement_string.split())
+    statement = statement_string.split(" ")
+    # Create Statement
+    if statement[0] == "create":
+        statement.pop(0)
+        create(statement)
+        print(tables_map)
+
+    # Insert Statement
+    elif statement[0] == "Insert":
+        # statement.pop(0)
+        # insert(statement)
+        pass
+
+    # Select Statement
+    elif statement[0] == "select":
+        # statement.pop(0)
+        # select(statement)
+        pass
+    else:
+        print("****Error: Beginning of an sql statement should start with create, insert, or select ****")
+        exit()
 
 
 
