@@ -90,7 +90,7 @@ def insert(statement):
     
     if statement[0] == "into":
         statement.pop(0)
-        print(statement)
+        
         if statement[0] in keywords or statement[0] in datatypes:
             print("**** Error: Can not use a keywoard as table name ****")
             exit()
@@ -108,7 +108,7 @@ def insert(statement):
                         if statement[0] == "(":
                             statement.pop(0)
                             insert_seq_two(table_select, statement)
-                            print(statement)
+                            
                             
                     else:
                         ("**** Error: Expected VALUES. Received " + statement[0] + " ****")
